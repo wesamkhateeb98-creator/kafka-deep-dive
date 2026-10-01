@@ -1,0 +1,64 @@
+# Kafka 4.x cluster - 3 nodes in KRaft mode (no ZooKeeper) + Kafka UI
+#   Host clients  -> localhost:29092,localhost:29093,localhost:29094
+#   Kafka UI      -> http://localhost:8088
+#   Start         -> docker compose -f docker/docker-compose.yml up -d
+#   Data lives inside the containers: `down` wipes it (good for experiments)
+
+x-kafka-env: &kafka-env
+  CLUSTER_ID: "4L6g3nShT-eMCtK--X86sw"                 # same for all nodes
+  KAFKA_PROCESS_ROLES: "broker,controller"             # combined mode (fine for dev)
+  KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka-1:9093,2@kafka-2:9093,3@kafka-3:9093"
+  KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+  KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+  KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+  KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+  KAFKA_MIN_INSYNC_REPLICAS: 2
+  KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+  KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+  KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+  KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+  KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"             # topics are created explicitly
+
+services:
+  kafka-1:
+    image: apache/kafka:4.1.0
+    container_name: kafka-1
+    restart: unless-stopped
+    ports: ["29092:29092"]
+    environment:
+      <<: *kafka-env
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENERS: "INTERNAL://:19092,CONTROLLER://:9093,EXTERNAL://:29092"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka-1:19092,EXTERNAL://localhost:29092"
+
+  kafka-2:
+    image: apache/kafka:4.1.0
+    container_name: kafka-2
+    restart: unless-stopped
+    ports: ["29093:29093"]
+    environment:
+      <<: *kafka-env
+      KAFKA_NODE_ID: 2
+      KAFKA_LISTENERS: "INTERNAL://:19092,CONTROLLER://:9093,EXTERNAL://:29093"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka-2:19092,EXTERNAL://localhost:29093"
+
+  kafka-3:
+    image: apache/kafka:4.1.0
+    container_name: kafka-3
+    restart: unless-stopped
+    ports: ["29094:29094"]
+    environment:
+      <<: *kafka-env
+      KAFKA_NODE_ID: 3
+      KAFKA_LISTENERS: "INTERNAL://:19092,CONTROLLER://:9093,EXTERNAL://:29094"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka-3:19092,EXTERNAL://localhost:29094"
+
+  kafka-ui:
+    image: ghcr.io/kafbat/kafka-ui:latest               # maintained fork of provectus/kafka-ui
+    container_name: kafka-ui
+    ports: ["8088:8080"]
+    depends_on: [kafka-1, kafka-2, kafka-3]
+    environment:
+      KAFKA_CLUSTERS_0_NAME: "local-kraft"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka-1:19092,kafka-2:19092,kafka-3:19092"
+      DYNAMIC_CONFIG_ENABLED: "true"
