@@ -1,0 +1,10 @@
+bin/
+obj/
+*.db
+*.db-*
+connect/data/*
+!connect/data/.gitkeep
+.vs/
+.idea/
+*.user
+TestResults/

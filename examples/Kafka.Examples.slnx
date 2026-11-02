@@ -1,0 +1,26 @@
+<Solution>
+  <Project Path="01-hello-kafka/01-hello-kafka.csproj" />
+  <Project Path="02-setup-cluster/02-setup-cluster.csproj" />
+  <Project Path="03-topics-partitions-offsets/03-topics-partitions-offsets.csproj" />
+  <Project Path="04-producer/04-producer.csproj" />
+  <Project Path="05-consumer/05-consumer.csproj" />
+  <Project Path="06-consumer-groups/06-consumer-groups.csproj" />
+  <Project Path="07-keys-ordering/07-keys-ordering.csproj" />
+  <Project Path="08-delivery-semantics/08-delivery-semantics.csproj" />
+  <Project Path="09-offset-commits/09-offset-commits.csproj" />
+  <Project Path="10-serialization-schema-registry/10-serialization-schema-registry.csproj" />
+  <Project Path="11-errors-retries-dlq/11-errors-retries-dlq.csproj" />
+  <Project Path="12-replication-isr/12-replication-isr.csproj" />
+  <Project Path="13-retention-compaction/13-retention-compaction.csproj" />
+  <Project Path="14-storage-internals/14-storage-internals.csproj" />
+  <Project Path="15-kraft-metadata/15-kraft-metadata.csproj" />
+  <Project Path="16-transactions-eos/16-transactions-eos.csproj" />
+  <Project Path="17-stream-processing/17-stream-processing.csproj" />
+  <Project Path="18-kafka-connect/18-kafka-connect.csproj" />
+  <Project Path="19-outbox-pattern/19-outbox-pattern.csproj" />
+  <Project Path="20-performance-tuning/20-performance-tuning.csproj" />
+  <Project Path="21-security/21-security.csproj" />
+  <Project Path="22-monitoring/22-monitoring.csproj" />
+  <Project Path="23-testing/23-testing.csproj" />
+  <Project Path="24-production-checklist/24-production-checklist.csproj" />
+</Solution>
