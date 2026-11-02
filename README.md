@@ -31,6 +31,7 @@ flowchart TD
 
 | # | Topic | Goal | Level |
 |---|---|---|---|
+| 00 | [C# API cheat sheet](docs/00-csharp-api-cheatsheet.md) | Every C# Kafka API used in this repo: code, what it does, where it runs | Reference |
 | 01 | [What is Kafka](docs/01-what-is-kafka.md) | Understand the event log and send/read your first event | Beginner |
 | 02 | [Setup cluster](docs/02-setup-cluster.md) | Run a 3-node KRaft cluster with Docker and inspect it from C# | Beginner |
 | 03 | [Topics, partitions, offsets](docs/03-topics-partitions-offsets.md) | Know how data is laid out and addressed | Beginner |
