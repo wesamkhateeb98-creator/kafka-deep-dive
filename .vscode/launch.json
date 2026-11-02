@@ -1,0 +1,394 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Kafka: debug example of the open file",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build open example",
+      "program": "${fileDirname}/bin/Debug/net10.0/${fileDirnameBasename}.dll",
+      "args": [],
+      "cwd": "${fileDirname}",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 01-hello-kafka",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 01-hello-kafka",
+      "program": "${workspaceFolder}/examples/01-hello-kafka/bin/Debug/net10.0/01-hello-kafka.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/01-hello-kafka",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 02-setup-cluster",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 02-setup-cluster",
+      "program": "${workspaceFolder}/examples/02-setup-cluster/bin/Debug/net10.0/02-setup-cluster.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/02-setup-cluster",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 03-topics-partitions-offsets",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 03-topics-partitions-offsets",
+      "program": "${workspaceFolder}/examples/03-topics-partitions-offsets/bin/Debug/net10.0/03-topics-partitions-offsets.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/03-topics-partitions-offsets",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 04-producer",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 04-producer",
+      "program": "${workspaceFolder}/examples/04-producer/bin/Debug/net10.0/04-producer.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/04-producer",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 05-consumer",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 05-consumer",
+      "program": "${workspaceFolder}/examples/05-consumer/bin/Debug/net10.0/05-consumer.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/05-consumer",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 06-consumer-groups",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 06-consumer-groups",
+      "program": "${workspaceFolder}/examples/06-consumer-groups/bin/Debug/net10.0/06-consumer-groups.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/06-consumer-groups",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 06-consumer-groups (KIP-848 protocol)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 06-consumer-groups",
+      "program": "${workspaceFolder}/examples/06-consumer-groups/bin/Debug/net10.0/06-consumer-groups.dll",
+      "args": [
+        "consumer"
+      ],
+      "cwd": "${workspaceFolder}/examples/06-consumer-groups",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 07-keys-ordering",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 07-keys-ordering",
+      "program": "${workspaceFolder}/examples/07-keys-ordering/bin/Debug/net10.0/07-keys-ordering.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/07-keys-ordering",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 08-delivery-semantics",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 08-delivery-semantics",
+      "program": "${workspaceFolder}/examples/08-delivery-semantics/bin/Debug/net10.0/08-delivery-semantics.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/08-delivery-semantics",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 09-offset-commits",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 09-offset-commits",
+      "program": "${workspaceFolder}/examples/09-offset-commits/bin/Debug/net10.0/09-offset-commits.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/09-offset-commits",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 10-serialization-schema-registry",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 10-serialization-schema-registry",
+      "program": "${workspaceFolder}/examples/10-serialization-schema-registry/bin/Debug/net10.0/10-serialization-schema-registry.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/10-serialization-schema-registry",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 11-errors-retries-dlq",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 11-errors-retries-dlq",
+      "program": "${workspaceFolder}/examples/11-errors-retries-dlq/bin/Debug/net10.0/11-errors-retries-dlq.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/11-errors-retries-dlq",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 12-replication-isr",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 12-replication-isr",
+      "program": "${workspaceFolder}/examples/12-replication-isr/bin/Debug/net10.0/12-replication-isr.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/12-replication-isr",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 12-replication-isr (create topic)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 12-replication-isr",
+      "program": "${workspaceFolder}/examples/12-replication-isr/bin/Debug/net10.0/12-replication-isr.dll",
+      "args": [
+        "create"
+      ],
+      "cwd": "${workspaceFolder}/examples/12-replication-isr",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 13-retention-compaction",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 13-retention-compaction",
+      "program": "${workspaceFolder}/examples/13-retention-compaction/bin/Debug/net10.0/13-retention-compaction.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/13-retention-compaction",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 14-storage-internals",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 14-storage-internals",
+      "program": "${workspaceFolder}/examples/14-storage-internals/bin/Debug/net10.0/14-storage-internals.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/14-storage-internals",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 15-kraft-metadata",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 15-kraft-metadata",
+      "program": "${workspaceFolder}/examples/15-kraft-metadata/bin/Debug/net10.0/15-kraft-metadata.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/15-kraft-metadata",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 16-transactions-eos",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 16-transactions-eos",
+      "program": "${workspaceFolder}/examples/16-transactions-eos/bin/Debug/net10.0/16-transactions-eos.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/16-transactions-eos",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 17-stream-processing",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 17-stream-processing",
+      "program": "${workspaceFolder}/examples/17-stream-processing/bin/Debug/net10.0/17-stream-processing.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/17-stream-processing",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 18-kafka-connect",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 18-kafka-connect",
+      "program": "${workspaceFolder}/examples/18-kafka-connect/bin/Debug/net10.0/18-kafka-connect.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/18-kafka-connect",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 19-outbox-pattern",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 19-outbox-pattern",
+      "program": "${workspaceFolder}/examples/19-outbox-pattern/bin/Debug/net10.0/19-outbox-pattern.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/19-outbox-pattern",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 20-performance-tuning",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 20-performance-tuning",
+      "program": "${workspaceFolder}/examples/20-performance-tuning/bin/Debug/net10.0/20-performance-tuning.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/20-performance-tuning",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 21-security",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 21-security",
+      "program": "${workspaceFolder}/examples/21-security/bin/Debug/net10.0/21-security.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/21-security",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 22-monitoring",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 22-monitoring",
+      "program": "${workspaceFolder}/examples/22-monitoring/bin/Debug/net10.0/22-monitoring.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/22-monitoring",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 24-production-checklist",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 24-production-checklist",
+      "program": "${workspaceFolder}/examples/24-production-checklist/bin/Debug/net10.0/24-production-checklist.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/24-production-checklist",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 25-request-lifecycle",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 25-request-lifecycle",
+      "program": "${workspaceFolder}/examples/25-request-lifecycle/bin/Debug/net10.0/25-request-lifecycle.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/25-request-lifecycle",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 26-group-coordinator",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 26-group-coordinator",
+      "program": "${workspaceFolder}/examples/26-group-coordinator/bin/Debug/net10.0/26-group-coordinator.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/26-group-coordinator",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 27-share-groups",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 27-share-groups",
+      "program": "${workspaceFolder}/examples/27-share-groups/bin/Debug/net10.0/27-share-groups.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/27-share-groups",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 28-tiered-storage",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 28-tiered-storage",
+      "program": "${workspaceFolder}/examples/28-tiered-storage/bin/Debug/net10.0/28-tiered-storage.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/28-tiered-storage",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 29-streams-windows-joins",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 29-streams-windows-joins",
+      "program": "${workspaceFolder}/examples/29-streams-windows-joins/bin/Debug/net10.0/29-streams-windows-joins.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/29-streams-windows-joins",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 30-background-service",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 30-background-service",
+      "program": "${workspaceFolder}/examples/30-background-service/bin/Debug/net10.0/30-background-service.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/30-background-service",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 31-debezium-cdc",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 31-debezium-cdc",
+      "program": "${workspaceFolder}/examples/31-debezium-cdc/bin/Debug/net10.0/31-debezium-cdc.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/31-debezium-cdc",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 32-mirrormaker-dr",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 32-mirrormaker-dr",
+      "program": "${workspaceFolder}/examples/32-mirrormaker-dr/bin/Debug/net10.0/32-mirrormaker-dr.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/32-mirrormaker-dr",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Kafka 33-event-patterns",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build 33-event-patterns",
+      "program": "${workspaceFolder}/examples/33-event-patterns/bin/Debug/net10.0/33-event-patterns.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/examples/33-event-patterns",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    }
+  ]
+}
