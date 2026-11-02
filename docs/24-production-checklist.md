@@ -157,4 +157,4 @@ var consumerConfig = new ConsumerConfig
 3. Never delete `__consumer_offsets` or `__transaction_state`.
 4. Practice failure (stop a broker in staging) before it happens in production.
 
-**Next:** 🎉 You finished the roadmap. Back to [README](../README.md).
+**Next:** [25 · Request lifecycle](25-request-lifecycle.md) (deep-dive track)

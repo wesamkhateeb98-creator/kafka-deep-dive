@@ -8,3 +8,5 @@ connect/data/*
 .idea/
 *.user
 TestResults/
+connect/plugins/*
+!connect/plugins/.gitkeep

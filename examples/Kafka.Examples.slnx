@@ -23,4 +23,13 @@
   <Project Path="22-monitoring/22-monitoring.csproj" />
   <Project Path="23-testing/23-testing.csproj" />
   <Project Path="24-production-checklist/24-production-checklist.csproj" />
+  <Project Path="25-request-lifecycle/25-request-lifecycle.csproj" />
+  <Project Path="26-group-coordinator/26-group-coordinator.csproj" />
+  <Project Path="27-share-groups/27-share-groups.csproj" />
+  <Project Path="28-tiered-storage/28-tiered-storage.csproj" />
+  <Project Path="29-streams-windows-joins/29-streams-windows-joins.csproj" />
+  <Project Path="30-background-service/30-background-service.csproj" />
+  <Project Path="31-debezium-cdc/31-debezium-cdc.csproj" />
+  <Project Path="32-mirrormaker-dr/32-mirrormaker-dr.csproj" />
+  <Project Path="33-event-patterns/33-event-patterns.csproj" />
 </Solution>

@@ -6,7 +6,21 @@
 
 ## Example
 
-<!-- STORY -->
+```
+Initial data:
+  topic 17-orders      : alice 150 · bob 30 · alice 20 · bob 300 · alice 500 · carol 99
+  rule                 : big order = amount >= 100
+
+Commands:
+  Filter >= 100        : alice 150, bob 300, alice 500 pass (3 of 6)
+  GroupByKey + Count   : state store big-order-count-store
+  To 17-big-order-counts
+
+Result:
+  alice                : 1 → 2 (two updates emitted)
+  bob                  : 1
+  carol                : nothing (99 < 100)
+```
 
 ## Diagram
 
@@ -43,12 +57,43 @@ builder.Stream<string, string>(input)
     .MapValues((count, _) => count.ToString())
     .To(output);
 
-var stream = new KafkaStream(builder.Build(), config);
+var stream = new KafkaStream(builder.Build(), config);   // config.Logger = warnings only
 
 await stream.StartAsync();
 ```
 
-<!-- OUTPUT -->
+Output (topology description, then the run):
+
+```text
+Topologies:
+   Sub-topology: 0
+    Source: KSTREAM-SOURCE-0000000000 (topics: [17-orders])
+      --> KSTREAM-FILTER-0000000001
+    Processor: KSTREAM-FILTER-0000000001 (stores: [])
+      --> KSTREAM-AGGREGATE-0000000002
+      <-- KSTREAM-SOURCE-0000000000
+    Processor: KSTREAM-AGGREGATE-0000000002 (stores: [big-order-count-store])
+      --> KTABLE-TOSTREAM-0000000003
+      <-- KSTREAM-FILTER-0000000001
+    Processor: KTABLE-TOSTREAM-0000000003 (stores: [])
+      --> KSTREAM-MAPVALUES-0000000004
+      <-- KSTREAM-AGGREGATE-0000000002
+    Processor: KSTREAM-MAPVALUES-0000000004 (stores: [])
+      --> KSTREAM-SINK-0000000005
+      <-- KTABLE-TOSTREAM-0000000003
+    Sink: KSTREAM-SINK-0000000005 (topic: 17-big-order-counts)
+      <-- KSTREAM-MAPVALUES-0000000004
+
+order in : alice 150
+order in : bob 30
+order in : alice 20
+order in : bob 300
+order in : alice 500
+order in : carol 99
+count out: alice -> 1 big order(s)
+count out: bob -> 1 big order(s)
+count out: alice -> 2 big order(s)
+```
 
 ## ✅ Correct vs ❌ wrong usage
 
@@ -65,5 +110,7 @@ await stream.StartAsync();
 2. `GroupBy` on a new key creates an internal repartition topic (extra I/O).
 3. Streamiz and Kafka Streams (Java) use murmur2 partitioning — align .NET producers ([07](07-keys-ordering.md)).
 4. Exactly-once in Streamiz: `Guarantee = ProcessingGuarantee.EXACTLY_ONCE`.
+
+Windows and joins: see [29](29-streams-windows-joins.md).
 
 **Next:** [18 · Kafka Connect](18-kafka-connect.md)

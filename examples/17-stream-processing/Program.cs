@@ -1,6 +1,7 @@
 // 17 - Stream processing with Streamiz (Kafka Streams for .NET): count big orders per customer.
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
+using Microsoft.Extensions.Logging;
 using Streamiz.Kafka.Net;
 using Streamiz.Kafka.Net.SerDes;
 using Streamiz.Kafka.Net.State;
@@ -37,7 +38,9 @@ var config = new StreamConfig<StringSerDes, StringSerDes>
     BootstrapServers = bootstrap,
     AutoOffsetReset = AutoOffsetReset.Earliest,
     CommitIntervalMs = 500,
-    ReplicationFactor = 3
+    ReplicationFactor = 3,
+    // Streamiz logs every config value at Info; keep only warnings
+    Logger = LoggerFactory.Create(b => b.SetMinimumLevel(LogLevel.Warning))
 };
 
 // topology: orders -> filter amount >= 100 -> group by customer -> count -> output topic
