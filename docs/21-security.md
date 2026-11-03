@@ -6,21 +6,15 @@
 
 ## Example
 
-```
-Initial data:
-  broker               : localhost:9192, SASL_PLAINTEXT + PLAIN, StandardAuthorizer
-  users                : admin (super user), alice, bob
-  ACL                  : User:alice Allow Write on Topic:21-salaries
+Two separate gates: **authentication** (who are you?) then **authorization** (what may you do?). ACL: `User:alice Allow Write Topic:21-salaries`.
 
-Commands:
-  alice / alice-secret : write OK
-  bob / bob-secret     : TopicAuthorizationFailed (authenticated, not authorized)
-  bob / wrong-password : Local_Authentication (not authenticated)
+| User | Password | Authenticated? | ACL allows Write? | Result |
+|---|---|---|---|---|
+| alice | alice-secret | ✅ | ✅ | write OK |
+| bob | bob-secret | ✅ | ❌ (no ACL) | TopicAuthorizationFailed |
+| bob | wrong-password | ❌ | – | Local_Authentication |
 
-Result:
-  allowed writers      : 1 of 3 attempts
-  default              : deny (allow.everyone.if.no.acl.found=false)
-```
+Default is deny (`allow.everyone.if.no.acl.found=false`): 1 of 3 attempts writes.
 
 ## Diagram
 

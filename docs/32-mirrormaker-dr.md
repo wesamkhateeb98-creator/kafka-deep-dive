@@ -6,22 +6,21 @@
 
 ## Example
 
-```
-Initial data:
-  primary              : 3-node lab cluster, topic 32-orders-082141 (5 orders)
-  dr                   : kafka-dr (localhost:9292), MM2 primary->dr, topics/groups 32-.*
-  group                : 32-billing-082141 processes o-1, o-2, o-3 on primary, commits offset 3
+Group `32-billing-082141` committed offset 3 on the primary; MirrorMaker 2 translates it for the DR cluster conservatively:
 
-Commands:
-  MM2 copies topic     : primary.32-orders-082141 on dr
-  after 10 s           : translated group offset on dr = 1
-  after 120 s          : still 1
-  consumer fails over  : processes o-2, o-3, o-4, o-5 on dr
-
-Result:
-  lost                 : 0 orders
-  duplicates           : o-2, o-3 processed twice (translation is conservative)
 ```
+primary  32-orders-082141      offset:  0     1     2     3     4
+                                        o-1   o-2   o-3   o-4   o-5
+                                        ✔     ✔     ✔     ▲ committed = 3
+
+dr       primary.32-orders-082141       o-1   o-2   o-3   o-4   o-5
+                                              ▲ translated = 1 (after 10 s and 120 s)
+
+failover consumer on dr                       o-2   o-3   o-4   o-5
+                                              └ dup ┘
+```
+
+Lost: 0. Duplicates: o-2, o-3. Consumers must be idempotent (doc 33).
 
 ## Diagram
 

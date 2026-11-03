@@ -6,20 +6,19 @@
 
 ## Example
 
+Same crash (while processing offset 2), two commit orders:
+
 ```
-Initial data:
-  topic                : 09-invoices, 1 partition, invoice-0 … invoice-5
-  crash point          : while processing offset 2
+offset                 0      1      2         3      4      5
+                      inv-0  inv-1  inv-2     inv-3  inv-4  inv-5
 
-Commands:
-  at-least-once run 1  : process 0,1 → commit next=2 → crash on 2
-  at-least-once run 2  : resumes at 2 → processes 2,3,4,5
-  at-most-once run 1   : commit next=1,2,3 before processing → crash on 2
-  at-most-once run 2   : resumes at 3 → processes 3,4,5
+at-least-once (process → commit)
+  run 1                ✔      ✔      💥  committed = 2
+  run 2                              ✔ again   ✔      ✔      ✔     inv-2 twice (duplicate)
 
-Result:
-  at-least-once        : invoice-2 handled twice (duplicate, nothing lost)
-  at-most-once         : invoice-2 never finished (lost, no duplicate)
+at-most-once (commit → process)
+  run 1                ✔      ✔      💥  committed = 3
+  run 2                                        ✔      ✔      ✔     inv-2 never done (lost)
 ```
 
 ## Diagram

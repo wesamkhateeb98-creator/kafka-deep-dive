@@ -6,21 +6,15 @@
 
 ## Example
 
-```
-Initial data:
-  topic                : 05-shipments (3 partitions)
-  records              : ship-1 … ship-6
-  group                : 05-shipment-tracker (no committed offset yet)
+A consumer keeps one **cursor per partition**. With no committed offset, `auto.offset.reset=earliest` starts every cursor at 0.
 
-Commands:
-  Subscribe + Consume  : auto.offset.reset=earliest → start at offset 0
-  read order           : p0 ship-6 → p2 ship-1, ship-2 → p1 ship-3, ship-4, ship-5
-  Close()              : commit + leave group
+| Partition | Records | Cursor before | Read | Committed on `Close()` |
+|---|---|---|---|---|
+| p0 | ship-6 | none → 0 | 1 | 1 |
+| p1 | ship-3, ship-4, ship-5 | none → 0 | 3 | 3 |
+| p2 | ship-1, ship-2 | none → 0 | 2 | 2 |
 
-Result:
-  consumed             : 6 records
-  order                : kept inside each partition, partitions interleaved
-```
+Actual read order: `ship-6 → ship-1, ship-2 → ship-3, ship-4, ship-5`. Order is kept inside a partition, not across partitions.
 
 ## Diagram
 

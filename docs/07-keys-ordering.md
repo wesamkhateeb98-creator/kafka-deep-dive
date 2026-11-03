@@ -6,20 +6,21 @@
 
 ## Example
 
-```
-Initial data:
-  topic                : 07-account-events, 3 partitions
-  events               : 5 accounts × (opened, deposit, withdraw) = 15 per run
+Same key → same partition → same order. The partition depends on the **hash function**, and .NET and Java clients use different defaults.
 
-Commands:
-  .NET default hash    : acc-1→2  acc-2→0  acc-3→2  acc-4→0  acc-5→0
-  murmur2 (Java) hash  : acc-1→0  acc-2→2  acc-3→2  acc-4→2  acc-5→1
-  read partition 0     : acc-1: opened → deposit → withdraw
+| Key | .NET default (`consistent_random`) | Java (`murmur2`) | Same? |
+|---|---|---|---|
+| acc-1 | 2 | 0 | ❌ |
+| acc-2 | 0 | 2 | ❌ |
+| acc-3 | 2 | 2 | ✅ |
+| acc-4 | 0 | 2 | ❌ |
+| acc-5 | 0 | 1 | ❌ |
 
-Result:
-  per key              : always exactly 1 partition → order kept
-  .NET vs Java         : 4 of 5 keys land on a different partition
 ```
+partition 0 with murmur2:   acc-1 opened → acc-1 deposit → acc-1 withdraw   (order kept)
+```
+
+4 of 5 keys land elsewhere: a .NET and a Java producer writing the same key break per-key order.
 
 ## Diagram
 

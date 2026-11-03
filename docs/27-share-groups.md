@@ -6,20 +6,17 @@
 
 ## Example
 
-```
-Initial data:
-  topic                : 27-jobs, 1 partition
-  workers              : 2
+Topic `27-jobs` has **1 partition** and 2 workers, 12 jobs:
 
-Commands:
-  classic group, 2 consumers   : worker-1 12 jobs, worker-2 0 jobs (idle)
-  enable share.version=1       : kafka-features.sh upgrade --feature share.version=1
-  share group, 2 consumers     : kafka-1 got 5 tasks, kafka-2 got 7 tasks
+| | Classic consumer group | Share group (KIP-932) |
+|---|---|---|
+| Unit given to a consumer | whole partition | individual records |
+| worker 1 | 12 jobs | 5 |
+| worker 2 | 0 (idle) | 7 |
+| Parallelism | 1 (= partitions) | 2 on the same partition |
+| Duplicates | – | none (5 + 7 = 12) |
 
-Result:
-  classic parallelism  : 1 (= partitions)
-  share parallelism    : 2 on the same partition (5 + 7 = 12 tasks, no duplicates)
-```
+Share groups first need `kafka-features.sh upgrade --feature share.version=1`.
 
 ## Diagram
 

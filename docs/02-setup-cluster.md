@@ -6,20 +6,21 @@
 
 ## Example
 
-```
-Initial data:
-  nodes                : kafka-1, kafka-2, kafka-3 (broker + controller each)
-  CLUSTER_ID           : MkU3OEVBNTcwNTJENDM2Qk
-  defaults             : 3 partitions, RF 3, min.insync.replicas 2
+Three nodes; every node is both **broker** (stores data) and **controller** (votes on metadata). Each partition has one copy per node (RF 3).
 
-Commands:
-  docker compose up -d : 3 containers Up
-  DescribeClusterAsync : brokers 1@localhost:9092, 2@localhost:9094, 3@localhost:9096
-
-Result:
-  copies per partition : 3 (one per node)
-  survives             : 1 node down with no data loss
 ```
+            kafka-1 :9092      kafka-2 :9094      kafka-3 :9096
+            ┌───────────┐      ┌───────────┐      ┌───────────┐
+ broker     │ p0 p1 p2  │      │ p0 p1 p2  │      │ p0 p1 p2  │   3 copies of each partition
+ controller │   voter   │      │   voter   │      │   voter   │   majority = 2 of 3
+            └───────────┘      └───────────┘      └───────────┘
+```
+
+| Nodes down | Copies left | Writes (`acks=all`, min ISR 2) | Metadata changes |
+|---|---|---|---|
+| 0 | 3 | ✅ | ✅ |
+| 1 | 2 | ✅ | ✅ (2 of 3 voters) |
+| 2 | 1 | ❌ NotEnoughReplicas (doc 12) | ❌ no majority |
 
 ## Diagram
 

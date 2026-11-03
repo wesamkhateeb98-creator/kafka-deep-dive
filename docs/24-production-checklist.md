@@ -6,20 +6,13 @@
 
 ## Example
 
-```
-Initial data:
-  cluster              : 23 user topics from the previous chapters
-  risky topic          : 24-risky-topic, RF 1, unclean.leader.election.enable=true
+Lint rules run against all 23 user topics; 22 pass. The one that fails:
 
-Commands:
-  GetMetadata          : 23 topics, partition replica counts
-  DescribeConfigs      : min.insync.replicas, unclean.leader.election.enable
-  lint rules           : RF ≥ 3 · min ISR = 2 (≤ RF) · unclean election off
-
-Result:
-  OK                   : 22 topics
-  WARN                 : 24-risky-topic with 3 problems
-```
+| Rule | Safe value | `24-risky-topic` | Risk |
+|---|---|---|---|
+| replication factor | ≥ 3 | 1 | ❌ one disk failure = data loss |
+| `min.insync.replicas` | 2, and ≤ RF | 2 (> RF 1) | ❌ `acks=all` writes always fail |
+| `unclean.leader.election.enable` | false | true | ❌ data loss on failover |
 
 ## Diagram
 

@@ -6,20 +6,21 @@
 
 ## Example
 
-```
-Initial data:
-  voters               : 1@kafka-1:9093, 2@kafka-2:9093, 3@kafka-3:9093
-  roles                : broker,controller on every node
+Metadata (topics, leaders, ISR) is a replicated log `__cluster_metadata` managed by a Raft quorum of 3 voters.
 
-Commands:
-  kafka-metadata-quorum describe --status      : LeaderId 1, LeaderEpoch 5, HighWatermark 1815
-  kafka-metadata-quorum describe --replication : nodes 1,2,3 at LogEndOffset 1821, lag 0
-  DescribeClusterAsync (C#)                    : "controller" 2 (random broker in KRaft)
+| Node | Role | Log end offset | Lag |
+|---|---|---|---|
+| 1 | **leader** (epoch 5) | 1821 | 0 |
+| 2 | follower | 1821 | 0 |
+| 3 | follower | 1821 | 0 |
 
-Result:
-  quorum               : 3 voters, majority = 2 → tolerates 1 controller down
-  metadata lag         : 0 records on all followers
-```
+High watermark 1815 = last metadata record confirmed by a majority.
+
+| Voters up | Majority (2) reached? | Effect |
+|---|---|---|
+| 3 | ✅ | normal |
+| 2 | ✅ | new leader elected if needed |
+| 1 | ❌ | no topic creation, no leader moves |
 
 ## Diagram
 

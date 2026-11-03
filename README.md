@@ -69,7 +69,7 @@ flowchart TD
 ## Quick start
 
 ```bash
-docker compose up -d                       # 3-node Kafka 4.1 cluster (KRaft, no ZooKeeper)
+docker compose up -d                       # 3-node Kafka 4.1 cluster (KRaft) + Kafka UI on http://localhost:8080
 cd examples/01-hello-kafka && dotnet run   # any example: cd examples/NN-<topic> && dotnet run
 ```
 
@@ -77,7 +77,6 @@ Optional services (only the examples that need them):
 
 | Command | Adds | Used by |
 |---|---|---|
-| `docker compose --profile ui up -d` | Kafka UI → http://localhost:8080 | browsing everything |
 | `docker compose --profile registry up -d` | Schema Registry → http://localhost:8081 | 10 |
 | `docker compose --profile connect up -d` | Kafka Connect → http://localhost:8083 | 18 |
 | `docker compose --profile security up -d` | SASL + ACL broker → localhost:9192 | 21 |
@@ -113,6 +112,6 @@ Tear down: `docker compose --profile "*" down -v`.
 
 ## How each doc is built
 
-1. **Definition** (one line) → 2. **Why it matters** → 3. **Example story** (real values) → 4. **Diagram** → 5. **C# code + real output** → 6. **✅ / ❌ usage** → 7. **Pitfalls** → 8. **Next**.
+1. **Definition** (one line) → 2. **Why it matters** → 3. **Example** in the form that shows the concept best: byte/box layout, before/after table, numbers table, or timeline (real values) → 4. **Diagram** → 5. **C# code + real output** → 6. **✅ / ❌ usage** → 7. **Pitfalls** → 8. **Next**.
 
 All outputs in the docs were produced by running the examples against the compose cluster. Numbers (offsets, latencies, partitions) will differ slightly on your machine.

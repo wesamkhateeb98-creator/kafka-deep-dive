@@ -1,6 +1,5 @@
 # Kafka zero-to-hero lab
-#   docker compose up -d                        -> 3-node KRaft cluster (localhost:9092,9094,9096)
-#   docker compose --profile ui up -d           -> + Kafka UI on http://localhost:8080
+#   docker compose up -d                        -> 3-node KRaft cluster (localhost:9092,9094,9096) + Kafka UI on http://localhost:8080
 #   docker compose --profile registry up -d     -> + Schema Registry on http://localhost:8081
 #   docker compose --profile connect up -d      -> + Kafka Connect on http://localhost:8083
 #   docker compose --profile security up -d     -> + SASL/ACL single node on localhost:9192
@@ -65,7 +64,7 @@ services:
 
   kafka-ui:
     image: kafbat/kafka-ui:v1.3.0
-    profiles: [ui]
+    container_name: kafka-ui
     ports: ["8080:8080"]
     depends_on: [kafka-1, kafka-2, kafka-3]
     environment:

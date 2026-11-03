@@ -6,21 +6,16 @@
 
 ## Example
 
-```
-Initial data:
-  topic                : 08-sensor-readings, RF 3, min.insync.replicas 2
-  test                 : 500 sequential awaited sends per setting
+500 awaited sends per setting, topic RF 3, `min.insync.replicas=2`:
 
-Commands:
-  acks=0               : status PossiblyPersisted, offset unknown, 5.502 ms/msg
-  acks=1               : status Persisted, 7.066 ms/msg
-  acks=all             : status Persisted, 9.489 ms/msg
-  acks=all + idempotent: status Persisted, 8.646 ms/msg
+| `acks` | Who must store it before the ack | Status | ms / msg | Loss possible when |
+|---|---|---|---|---|
+| 0 | nobody | PossiblyPersisted (no offset) | 5.502 | always (fire and forget) |
+| 1 | leader | Persisted | 7.066 | leader dies before followers copy |
+| all | leader + ISR (≥ 2) | Persisted | 9.489 | never (while ISR ≥ 2) |
+| all + idempotent | leader + ISR, dedupe on retry | Persisted | 8.646 | never, and no duplicates |
 
-Result:
-  acks=all vs acks=0   : +3.987 ms per awaited message (~1.7×)
-  idempotence cost     : none measurable (8.646 vs 9.489 ms, noise)
-```
+Cost of safety: 9.489 − 5.502 = **+3.987 ms** per awaited message; idempotence adds nothing measurable.
 
 ## Diagram
 

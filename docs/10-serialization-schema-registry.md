@@ -6,7 +6,25 @@
 
 ## Example
 
-<!-- STORY -->
+`Order("o-1","alice",120.5)` on the wire: **51 bytes** = 5-byte header + JSON.
+
+```
+┌──────┬─────────────┬────────────────────────────────────────────────┐
+│ 0x00 │ 00 00 00 09 │ {"Id":"o-1","Customer":"alice","Amount":120.5} │
+│ magic│ schema id 9 │ JSON payload (46 B)                            │
+└──────┴─────────────┴────────────────────────────────────────────────┘
+   1 B       4 B
+```
+
+The consumer reads id 9, fetches that schema once (cached), and builds the `Order`. The registry decides which next version is allowed (`BACKWARD`):
+
+```mermaid
+flowchart LR
+    V1["v1: Customer = string"] -->|"add optional field"| OK["✅ v2 accepted"]
+    V1 -->|"Customer → integer"| NO["❌ HTTP 409 TYPE_CHANGED"]
+```
+
+> Schema ids are global and never reused: after hard-deleting the subject between runs, the id grows (1, 2, … 9) while the version restarts at 1.
 
 ## Diagram
 
@@ -58,7 +76,32 @@ await producer.ProduceAsync(topic, new Message<string, Order> { Key = "o-1", Val
 public record Order(string Id, string Customer, decimal Amount);
 ```
 
-<!-- OUTPUT -->
+Output (real run):
+
+```
+produced Order o-1 -> p2@3
+wire bytes: magic=0x00 schemaId=0x00000009 json={"Id":"o-1","Customer":"alice","Amount":120.5}
+subject=10-orders-value version=1 id=9 type=Json
+compatibility=Backward
+consumed typed object: Order { Id = o-1, Customer = alice, Amount = 120.5 }
+breaking schema rejected: HTTP 409 TYPE_CHANGED at #/properties/Customer
+```
+
+Generated schema (from `Order` by the serializer):
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Order",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "Id": { "type": "string" },
+    "Customer": { "type": "string" },
+    "Amount": { "type": "number", "format": "decimal" }
+  }
+}
+```
 
 ## ✅ Correct vs ❌ wrong usage
 
@@ -76,5 +119,6 @@ public record Order(string Id, string Customer, decimal Amount);
 2. Registry down ⇒ new schemas cannot be registered; clients cache known ids.
 3. JSON Schema compatibility is stricter/odder than Avro (open vs closed content models).
 4. Never mix raw JSON and registry-framed messages in one topic — the deserializer expects the magic byte.
+5. C# `decimal` becomes `{"type":"number","format":"decimal"}`. Measured on cp-schema-registry 8.0.0: changing that field to `"string"` (format kept) returned `is_compatible: true`, while the same change without `format` returned `TYPE_CHANGED`. Test your real schemas with `POST /compatibility/subjects/<subject>/versions/latest?verbose=true` in CI.
 
 **Next:** [11 · Errors, retries & DLQ](11-errors-retries-dlq.md)

@@ -6,21 +6,16 @@
 
 ## Example
 
-```
-Initial data:
-  topic                : 06-clicks, 6 partitions
-  group                : 06-clicks-group, cooperative-sticky
+Partitions of `06-clicks` (6) as consumers join and leave group `06-clicks-group` with cooperative-sticky:
 
-Commands:
-  t=2 s  A joins       : A owns 0,1,2,3,4,5
-  t=8 s  B joins       : A revokes 0,1,2 → B owns 0,1,2 (A keeps 3,4,5)
-  t=14 s C joins       : B revokes 0, A revokes 3 → C owns 0,3
-  t=20 s A stops       : B gets 4, C gets 5
+| Time | Event | A | B | C | Moved |
+|---|---|---|---|---|---|
+| t=2 s | A joins | 0 1 2 3 4 5 | – | – | 6 (first assignment) |
+| t=8 s | B joins | 3 4 5 | 0 1 2 | – | 3 |
+| t=14 s | C joins | 4 5 | 1 2 | 0 3 | 2 |
+| t=20 s | A stops | – | 1 2 4 | 0 3 5 | 2 |
 
-Result:
-  final                : B = 1,2,4   C = 0,3,5
-  moved per rebalance  : 3, 2, 2 partitions (never all 6)
-```
+Only the partitions that move stop briefly; an eager rebalance would revoke all 6 each time.
 
 ## Diagram
 

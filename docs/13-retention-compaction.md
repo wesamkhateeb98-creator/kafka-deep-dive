@@ -6,20 +6,18 @@
 
 ## Example
 
-```
-Initial data:
-  topic                : 13-customer-addresses, cleanup.policy=compact
-  writes               : 7 (cust-1 ×3, cust-2 ×2, cust-3 ×1 + 1 tombstone)
+Compaction keeps the **latest value per key**; a `null` value (tombstone) deletes the key. Offsets are never renumbered.
 
-Commands:
-  read before cleaning : offsets 0 … 6, all 7 records
-  roll segment + wait  : log cleaner runs (~27 s)
-  read after cleaning  : offset 4 cust-2=Lyon, offset 5 cust-1=Hamburg
-
-Result:
-  records              : 7 → 2 (latest value per key)
-  cust-3               : gone (tombstone removed it)
 ```
+before   offset: 0         1        2         3       4        5           6
+                 cust-1    cust-2   cust-1    cust-3  cust-2   cust-1      cust-3
+                 Berlin    Paris    Munich    Rome    Lyon     Hamburg     null (tombstone)
+                 ✗ old     ✗ old    ✗ old     ✗ del   ✓        ✓           ✗ expired
+
+after (~27 s)    offset 4: cust-2 = Lyon     offset 5: cust-1 = Hamburg
+```
+
+7 records → 2. `cust-3` is gone because of its tombstone.
 
 ## Diagram
 

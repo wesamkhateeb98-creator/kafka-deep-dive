@@ -6,19 +6,15 @@
 
 ## Example
 
+Generic Host lifetime with a singleton producer and a `BackgroundService` consumer:
+
 ```
-Initial data:
-  services             : OrderApiSimulator (producer), EmailWorker (consumer), StopAfter (6 s)
-  topic                : 30-orders, 3 partitions
-
-Commands:
-  host start           : EmailWorker assigned 3 partitions
-  every 1 s            : publish order-N → EmailWorker "sending email for order-N"
-  StopApplication()    : EmailWorker "stop requested" → Close() → producer Flush
-
-Result:
-  published / handled  : 6 / 6
-  shutdown order       : consumer closed (offsets committed) → producer flushed, 0 left
+t=0 s   host start      EmailWorker subscribes → assigned 3 partitions
+t=1..6  every 1 s       OrderApiSimulator publishes order-N → EmailWorker "sending email for order-N"
+t=6 s   StopApplication()
+          1. EmailWorker  "stop requested" → Close()  (commit offsets, leave group)
+          2. producer     Flush → 0 left
+                                                     published 6 · handled 6
 ```
 
 ## Diagram

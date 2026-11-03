@@ -6,21 +6,18 @@
 
 ## Example
 
-```
-Initial data:
-  records              : 200,000 × ~112-byte JSON, acks=all, 6 partitions
+200,000 records of ~112 B JSON, `acks=all`, 6 partitions:
 
-Commands:
-  linger 0, none       :   7,459 msg/s · 26.81 s · 26,372 KiB on disk
-  linger 5, none       : 119,267 msg/s ·  1.68 s · 25,952 KiB
-  linger 20, none      : 266,343 msg/s ·  0.75 s · 25,952 KiB
-  linger 20, lz4       : 202,332 msg/s ·  0.99 s ·  3,236 KiB
-  linger 20, zstd      : 187,929 msg/s ·  1.06 s ·  1,132 KiB
+| `linger.ms` | Compression | msg/s | Time | On disk |
+|---|---|---|---|---|
+| 0 | none | 7,459 | 26.81 s | 26,372 KiB |
+| 5 | none | 119,267 | 1.68 s | 25,952 KiB |
+| 20 | none | **266,343** | 0.75 s | 25,952 KiB |
+| 20 | lz4 | 202,332 | 0.99 s | 3,236 KiB |
+| 20 | zstd | 187,929 | 1.06 s | **1,132 KiB** |
 
-Result:
-  linger 0 → 20        : 266,343 / 7,459 = 35.7× throughput
-  zstd vs none (disk)  : 25,952 / 1,132 = 22.9× smaller
-```
+- linger 0 → 20: 266,343 / 7,459 = **35.7×** throughput (bigger batches, fewer requests).
+- zstd vs none: 25,952 / 1,132 = **22.9×** smaller on disk.
 
 ## Diagram
 

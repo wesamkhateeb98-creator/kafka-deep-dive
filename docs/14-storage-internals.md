@@ -6,20 +6,22 @@
 
 ## Example
 
-```
-Initial data:
-  topic                : 14-clickstream, 1 partition, segment.bytes = 1 MiB
-  records              : 3000 × 1000-byte values, event time 12:00:00 + 1 s each
+A partition is a folder of **segments**; each segment's file name is its first offset. 3000 × 1000-byte records, `segment.bytes = 1 MiB`:
 
-Commands:
-  ls partition dir     : segments 00…000.log, 00…988.log, 00…1976.log
-  dump 00…000.log      : 1 batch, offsets 0–987, 988 records, 999,843 bytes
-  OffsetsForTimes      : 12:10:00 → 600 · 12:33:20 → 2000 · 12:49:59 → 2999
-
-Result:
-  segments             : 3 files (988 + 988 + 1024 records)
-  file name            : = first offset in that segment
 ```
+/tmp/kafka-logs/14-clickstream-0/
+├── 00000000000000000000.log        offsets    0 – 987   (988 records, 999,843 B)
+├── 00000000000000000000.index      offset → byte position
+├── 00000000000000000000.timeindex  timestamp → offset
+├── 00000000000000000988.log        offsets  988 – 1975  (988 records)
+└── 00000000000000001976.log        offsets 1976 – 2999  (1024 records, active)
+```
+
+Time lookup `OffsetsForTimes(12:33:20)` (event time = 12:00:00 + offset seconds):
+
+1. 12:33:20 − 12:00:00 = 2000 s.
+2. Segment `…1976` covers 1976–2999 → open its `.timeindex`.
+3. Scan from the nearest index entry → **offset 2000**.
 
 ## Diagram
 

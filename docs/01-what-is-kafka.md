@@ -18,21 +18,24 @@
 
 ## Example
 
-```
-Initial data:
-  cluster              : 3 brokers (localhost:9092, 9094, 9096)
-  topic                : 01-hello (auto-created, 3 partitions)
-  record               : key "greeting", value "Hello, Kafka!"
+A topic partition is an **append-only log**. Writing adds to the end; reading moves a cursor and never deletes.
 
-Commands:
-  ProduceAsync(record) : stored at partition 2, offset 0
-  Assign(p2, offset 0) : consumer points at that exact position
-  Consume()            : key=greeting value=Hello, Kafka!
-
-Result:
-  record in the log    : still there after the read (reading never deletes)
-  another reader       : can read offset 0 again at any time
 ```
+topic 01-hello · partition 2
+
+  offset    0
+          ┌─────────────────────────────────────┐
+          │ key=greeting  value="Hello, Kafka!" │  ◄── producer appends at the end
+          └─────────────────────────────────────┘
+            ▲                    ▲
+            reader A: offset 0   reader B: offset 0 again, any time later
+```
+
+| | Classic queue | Kafka log |
+|---|---|---|
+| After a read | message removed | record stays (until retention) |
+| Second reader | does not see it | reads offset 0 again |
+| Position | broker tracks | reader keeps its own offset |
 
 ## Diagram
 

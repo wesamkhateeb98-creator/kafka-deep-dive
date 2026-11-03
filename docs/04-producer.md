@@ -6,20 +6,26 @@
 
 ## Example
 
-```
-Initial data:
-  topic                : 04-payments (3 partitions)
-  config               : acks=all, enable.idempotence=true, linger.ms=5
+The producer hashes the key to a partition, buffers records per partition, and sends a batch when `linger.ms` expires.
 
-Commands:
-  ProduceAsync(pay-1001)    : partition 2, offset 2, status Persisted
-  Produce ×5 + callback     : pay-2001 p2@3 · pay-2002..2004 p0@3..5 · pay-2005 p1@1
-  Flush(10 s)               : stillQueued = 0
-
-Result:
-  delivered                 : 1 awaited + 5 callbacks = 6 records
-  same partition, new key   : offsets keep growing (p0: 3 → 4 → 5)
 ```
+ProduceAsync / Produce(key, value)
+        │
+        ▼ partitioner(key)
+┌──────────────────────────────────────────────┐
+│ buffer p0 : pay-2002 pay-2003 pay-2004       │──┐
+│ buffer p1 : pay-2005                         │──┼─ linger.ms=5 → one request per broker
+│ buffer p2 : pay-1001 (awaited) pay-2001      │──┘
+└──────────────────────────────────────────────┘
+        │ acks=all: leader + in-sync followers wrote it
+        ▼
+offsets   p0 @3,4,5    p1 @1    p2 @2,3          Flush(10 s) → 0 left in buffer
+```
+
+| Send style | Call | Result arrives | Use when |
+|---|---|---|---|
+| await | `await ProduceAsync` | per message (pay-1001 → p2@2) | you need the offset now |
+| callback | `Produce(..., handler)` | later, in batch (5 reports) | high throughput |
 
 ## Diagram
 

@@ -6,20 +6,19 @@
 
 ## Example
 
+An event's address is **(topic, partition, offset)**. Offsets count per partition, so offset 1 exists three times.
+
 ```
-Initial data:
-  topic                : 03-orders, 3 partitions, RF 3
-  events               : order-0 … order-6 (7 events), partition = i % 3
+topic 03-orders (7 events, partition = i % 3)
 
-Commands:
-  produce order-0..6   : p0 ← 0,3,6   p1 ← 1,4   p2 ← 2,5
-  QueryWatermarkOffsets: p0 low 0 high 3 · p1 low 0 high 2 · p2 low 0 high 2
-  DescribeTopics       : p0 leader 3, p1 leader 1, p2 leader 2
+               offset 0    offset 1    offset 2     high watermark
+p0 (leader 3) │ order-0  │ order-3  │ order-6  │    3
+p1 (leader 1) │ order-1  │ order-4  │               2
+p2 (leader 2) │ order-2  │ order-5  │               2
+                                                   ─────
+                                                     7 events
 
-Result:
-  total events         : 3 + 2 + 2 = 7
-  offset 1 exists in   : all 3 partitions (offsets are per partition)
-  leaders              : spread over all 3 brokers
+order-4 = (03-orders, p1, offset 1)
 ```
 
 ## Diagram

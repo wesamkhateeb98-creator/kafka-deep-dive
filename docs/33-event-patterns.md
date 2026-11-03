@@ -6,21 +6,16 @@
 
 ## Example
 
-```
-Initial data:
-  wallet               : 100 EUR
-  events on 33-orders  : o-1 50 (evt-1) · o-2 500 (evt-2) · o-1 50 (evt-1, DUPLICATE) · o-3 30 (evt-3)
+Wallet starts at 100 EUR. Events on `33-orders`, one is a redelivered duplicate:
 
-Commands:
-  payment service      : o-1 charged 50 → 50 · o-2 500 > 50 → PaymentFailed
-                         evt-1 again → skipped · o-3 charged 30 → 20
-  order service        : o-1 CONFIRMED · o-2 CANCELLED (compensation) · o-3 CONFIRMED
-  replay 33-payments   : 100 − 50 − 30 = 20
+| Event | Order | Payment service | Wallet | Order service |
+|---|---|---|---|---|
+| evt-1 | o-1, 50 | charge | 100 → 50 | CONFIRMED |
+| evt-2 | o-2, 500 | 500 > 50 → PaymentFailed | 50 | CANCELLED (compensation) |
+| evt-1 (dup) | o-1, 50 | event id seen → skip | 50 | – |
+| evt-3 | o-3, 30 | charge | 50 → 20 | CONFIRMED |
 
-Result:
-  wallet               : 20 (live) = 20 (rebuilt from 3 events)
-  double charge        : none (dedupe by event id)
-```
+Event sourcing check: replaying `33-payments` gives 100 − 50 − 30 = **20** = live wallet. No double charge.
 
 ## Diagram
 

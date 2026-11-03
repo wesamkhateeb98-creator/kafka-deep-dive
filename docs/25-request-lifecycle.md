@@ -6,22 +6,20 @@
 
 ## Example
 
-```
-Initial data:
-  topic                : 25-latency, 1 partition, RF 3
-  record               : one 20-byte value
-  consumer             : fetch already waiting in the broker before the produce
+A fetch that cannot be answered yet waits in **purgatory** until enough bytes arrive **or** `fetch.wait.max.ms` expires. One 20-byte record, consumer already waiting:
 
-Commands:
-  fetch.min.bytes=1,  wait 500  : consumed 85 ms after send (= right after the ack)
-  fetch.min.bytes=1MB, wait 500 : consumed 508 ms after send
-  fetch.min.bytes=1MB, wait 3000: consumed 2042 ms after send
-  read 12-bank-transfers p0     : offsets 0,1 leaderEpoch 0 · offset 2 leaderEpoch 1
+| `fetch.min.bytes` | `fetch.wait.max.ms` | Consumed after send | Released by |
+|---|---|---|---|
+| 1 | 500 | 85 ms | data (1 B ≥ 1 B) right after the ack |
+| 1 MB | 500 | 508 ms | timeout (20 B < 1 MB) |
+| 1 MB | 3000 | 2042 ms | timeout |
 
-Result:
-  delay                : the fetch sits in purgatory until 1 MB arrives OR wait.max.ms expires
-  leader epoch         : +1 each time leadership moved (doc 12 stopped and restarted brokers)
-```
+Leader epoch = leadership generation, stored in every batch (`12-bank-transfers` p0 after doc 12's broker restarts):
+
+| Offset | Leader epoch | Why |
+|---|---|---|
+| 0, 1 | 0 | first leader |
+| 2 | 1 | leadership moved once |
 
 ## Diagram
 

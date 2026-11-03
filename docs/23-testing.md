@@ -6,19 +6,15 @@
 
 ## Example
 
+Testcontainers gives each test run a real, throw-away broker:
+
 ```
-Initial data:
-  image                : apache/kafka:4.1.0 (started by Testcontainers)
-  tests                : 2 [Fact]s in OrderEventsTests
-
-Commands:
-  dotnet test          : container start → tests run → container removed
-  test 1               : produce ord-1 → consume → key and value equal
-  test 2               : 10 × key acc-42 → partitions seen = 1
-
-Result:
-  passed               : 2 of 2
-  total time           : 21.6 s (mostly container start)
+dotnet test
+ 1. start container apache/kafka:4.1.0      (random host port)
+ 2. test 1: produce ord-1 → consume          key and value equal          ✅
+ 3. test 2: 10 × key acc-42                  partitions seen = 1          ✅
+ 4. remove container
+                                             2 of 2 passed · 21.6 s (mostly step 1)
 ```
 
 ## Diagram

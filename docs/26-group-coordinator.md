@@ -6,22 +6,15 @@
 
 ## Example
 
-```
-Initial data:
-  group                : 26-billing
-  topic                : 26-invoices, 4 partitions
-  __consumer_offsets   : 50 partitions (offsets.topic.num.partitions default)
+Which broker manages group `26-billing`? Pure arithmetic:
 
-Commands:
-  javaHashCode("26-billing")  : 953190386
-  953190386 % 50              : 36 → __consumer_offsets-36, leader = broker 2
-  DescribeConsumerGroups      : state Stable, assignor range, coordinator broker 2
-  members                     : billing-a [0,1] · billing-b [2,3]
-
-Result:
-  coordinator == leader of partition 36 : True
-  commits of 26-billing                 : written as records to __consumer_offsets-36
 ```
+1. h = javaHashCode("26-billing")        = 953190386
+2. p = h % offsets.topic.num.partitions  = 953190386 % 50 = 36
+3. coordinator = leader of __consumer_offsets-36 = broker 2
+```
+
+DescribeConsumerGroups confirms it: state Stable, assignor range, coordinator broker 2, members billing-a [0,1] and billing-b [2,3]. Every commit of `26-billing` is a record in `__consumer_offsets-36`.
 
 ## Diagram
 

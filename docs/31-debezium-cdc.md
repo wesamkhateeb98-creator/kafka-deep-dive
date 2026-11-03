@@ -6,24 +6,17 @@
 
 ## Example
 
-```
-Initial data:
-  table customers      : (1, alice, Berlin)   REPLICA IDENTITY FULL
-  connector            : PostgresConnector, plugin pgoutput, topic.prefix 31-shop
+Debezium reads the Postgres write-ahead log and turns each row change into an event on `31-shop.public.customers` (key = primary key):
 
-Commands:
-  POST /connectors     : 201 → snapshot of existing rows
-  INSERT (2, bob, Paris)
-  UPDATE id 1 city = Munich
-  DELETE id 2
+| SQL | `op` | before | after |
+|---|---|---|---|
+| (existing row, snapshot) | r | – | 1, alice, Berlin |
+| `INSERT (2, bob, Paris)` | c | – | 2, bob, Paris |
+| `UPDATE … city = Munich WHERE id = 1` | u | 1, alice, Berlin | 1, alice, Munich |
+| `DELETE WHERE id = 2` | d | 2, bob, Paris | null |
+| (follow-up) | tombstone | key `{"id":2}`, value null | for compaction |
 
-Result (topic 31-shop.public.customers):
-  {"id":1} op=r  after alice/Berlin                (snapshot)
-  {"id":2} op=c  after bob/Paris                   (insert)
-  {"id":1} op=u  before Berlin → after Munich      (update)
-  {"id":2} op=d  before bob/Paris, after null      (delete)
-  {"id":2} tombstone                               (for compaction)
-```
+`before` is filled only because the table uses `REPLICA IDENTITY FULL`.
 
 ## Diagram
 

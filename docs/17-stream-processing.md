@@ -6,21 +6,16 @@
 
 ## Example
 
-```
-Initial data:
-  topic 17-orders      : alice 150 · bob 30 · alice 20 · bob 300 · alice 500 · carol 99
-  rule                 : big order = amount >= 100
+Rule: count orders with amount ≥ 100 per customer. The state store keeps the running count.
 
-Commands:
-  Filter >= 100        : alice 150, bob 300, alice 500 pass (3 of 6)
-  GroupByKey + Count   : state store big-order-count-store
-  To 17-big-order-counts
-
-Result:
-  alice                : 1 → 2 (two updates emitted)
-  bob                  : 1
-  carol                : nothing (99 < 100)
-```
+| Input | Filter ≥ 100 | Store after | Emitted to `17-big-order-counts` |
+|---|---|---|---|
+| alice 150 | ✅ | alice=1 | alice → 1 |
+| bob 30 | ❌ | – | – |
+| alice 20 | ❌ | – | – |
+| bob 300 | ✅ | bob=1 | bob → 1 |
+| alice 500 | ✅ | alice=2 | alice → 2 |
+| carol 99 | ❌ | – | – |
 
 ## Diagram
 

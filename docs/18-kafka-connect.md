@@ -6,20 +6,17 @@
 
 ## Example
 
+A connector is configured by JSON over REST; the Connect worker runs the code that reads the file and produces.
+
 ```
-Initial data:
-  file                 : connect/data/legacy-orders.csv (3 lines)
-  connector            : FileStreamSourceConnector → topic 18-legacy-orders
+connect/data/legacy-orders.csv         FileStreamSource task 0        topic 18-legacy-orders
+┌──────────────────────┐               ┌──────────────┐               ┌──────────────────────┐
+│ 1001,alice,120.50    │ ────────────► │   RUNNING    │ ────────────► │ 1001,alice,120.50    │
+│ 1002,bob,35.00       │   read line   │ (in Connect) │   produce     │ 1002,bob,35.00       │
+│ 1003,carol,980.00    │               └──────────────┘               │ 1003,carol,980.00    │
+└──────────────────────┘                                              └──────────────────────┘
 
-Commands:
-  GET /connector-plugins : 5 plugins (FileStream source/sink, MirrorMaker ×3)
-  POST /connectors     : 201 Created
-  GET …/status         : connector RUNNING, task0 RUNNING
-  consume topic        : 1001,alice,120.50 · 1002,bob,35.00 · 1003,carol,980.00
-
-Result:
-  C# producer code     : 0 lines (C# only called the REST API)
-  events               : 3, one per CSV line
+your C#: POST /connectors (JSON) → 201 Created          producer code written: 0 lines
 ```
 
 ## Diagram

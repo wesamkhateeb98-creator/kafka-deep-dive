@@ -20,6 +20,8 @@ using (var http = new HttpClient { BaseAddress = new Uri("http://localhost:8081"
     await http.DeleteAsync($"/subjects/{subject}?permanent=true");
 }
 
+TopicPartitionOffset produced;
+
 using (var producer = new ProducerBuilder<string, Order>(new ProducerConfig { BootstrapServers = bootstrap })
     .SetValueSerializer(new JsonSerializer<Order>(registry))
     .Build())
@@ -27,9 +29,11 @@ using (var producer = new ProducerBuilder<string, Order>(new ProducerConfig { Bo
     // the serializer generates a JSON schema from Order and registers it on first use
     var result = await producer.ProduceAsync(topic, new Message<string, Order> { Key = "o-1", Value = new Order("o-1", "alice", 120.5m) });
 
+    produced = result.TopicPartitionOffset;
+
     Console.WriteLine($"produced Order o-1 -> p{result.Partition.Value}@{result.Offset.Value}");
 
-    var raw = await ReadRaw(result.TopicPartitionOffset);
+    var raw = await ReadRaw(produced);
 
     Console.WriteLine($"wire bytes: magic=0x{raw[0]:x2} schemaId=0x{Convert.ToHexString(raw, 1, 4)} json={System.Text.Encoding.UTF8.GetString(raw, 5, raw.Length - 5)}");
 }
@@ -44,17 +48,19 @@ using (var consumer = new ConsumerBuilder<string, Order>(new ConsumerConfig { Bo
     .SetValueDeserializer(new JsonDeserializer<Order>().AsSyncOverAsync())
     .Build())
 {
-    var marks = consumer.QueryWatermarkOffsets(new TopicPartition(topic, 0), TimeSpan.FromSeconds(5));
-
-    consumer.Assign(new TopicPartitionOffset(topic, 0, marks.High - 1));
+    consumer.Assign(produced);
 
     var record = consumer.Consume(TimeSpan.FromSeconds(10));
 
     Console.WriteLine($"consumed typed object: {record.Message.Value}");
 }
 
-// a breaking change: Amount becomes a string -> the registry rejects it (BACKWARD compatibility)
-var breaking = latest.SchemaString.Replace("\"number\"", "\"string\"");
+// a breaking change: Customer becomes an integer -> the registry rejects it (BACKWARD compatibility)
+var breakingNode = System.Text.Json.Nodes.JsonNode.Parse(latest.SchemaString)!;
+
+breakingNode["properties"]!["Customer"]!["type"] = "integer";
+
+var breaking = breakingNode.ToJsonString();
 
 try
 {
@@ -64,7 +70,9 @@ try
 }
 catch (SchemaRegistryException ex)
 {
-    Console.WriteLine($"breaking schema rejected: HTTP {(int)ex.Status} {ex.Message.Split(';')[0]}");
+    var reason = System.Text.RegularExpressions.Regex.Match(ex.Message, "errorType:\"(\\w+)\".*?path '([^']+)'");
+
+    Console.WriteLine($"breaking schema rejected: HTTP {(int)ex.Status} {reason.Groups[1].Value} at {reason.Groups[2].Value}");
 }
 
 async Task<byte[]> ReadRaw(TopicPartitionOffset at)

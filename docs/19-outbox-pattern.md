@@ -6,21 +6,16 @@
 
 ## Example
 
-```
-Initial data:
-  tables               : orders, outbox (SQLite)
-  requests             : ord-1 (120.5), ord-2 (35.0), ord-3 (-1, invalid)
+The order row and the event row commit in **one DB transaction**; a relay publishes the event later.
 
-Commands:
-  PlaceOrder ord-1, 2  : 1 transaction each: order row + outbox row
-  PlaceOrder ord-3     : rollback → no order, no outbox row
-  relay                : outbox seq 1 → p0@0, seq 2 → p0@1, mark sent_at
+| Request | DB transaction | `orders` | `outbox` | Kafka |
+|---|---|---|---|---|
+| ord-1 (120.5) | commit | +1 | +1 (seq 1) | – |
+| ord-2 (35.0) | commit | +1 | +1 (seq 2) | – |
+| ord-3 (−1) | rollback | – | – | – |
+| relay | – | 2 | 2 → `sent_at` set | seq 1 → p0@0, seq 2 → p0@1 |
 
-Result:
-  orders / outbox      : 2 / 2
-  pending after relay  : 0
-  events without order : impossible (same transaction)
-```
+Crash anywhere: either both rows exist (event published later) or neither does. An event without an order is impossible.
 
 ## Diagram
 

@@ -6,22 +6,23 @@
 
 ## Example
 
-```
-Initial data:
-  clicks (event time)  : alice @12:00:01, :04, :09, :12 · bob @12:00:03, :15
-  customers (KTable)   : alice=gold, bob=silver → later bob=gold
-  orders (KStream)     : alice order-1, carol order-2, bob order-3 (after bob → gold)
+**Tumbling 10 s windows** group clicks by their event time, not arrival time:
 
-Commands:
-  tumbling 10 s count  : alice [12:00:00-12:00:10) → 1, 2, 3 · [12:00:10-12:00:20) → 1
-                         bob   [12:00:00-12:00:10) → 1      · [12:00:10-12:00:20) → 1
-  order ⋈ customers    : alice → tier=gold · carol → dropped · bob → tier=gold
-
-Result:
-  windows              : by record timestamp, not by arrival time
-  inner join           : carol has no customer row → no output
-  table lookup         : uses the value at join time (bob was already gold)
 ```
+event time   12:00:00 ─────────────── 12:00:10 ─────────────── 12:00:20
+alice          :01   :04        :09  │    :12
+               count 1    2      3   │    count 1
+bob               :03                │          :15
+               count 1               │    count 1
+```
+
+**Stream–table join**: each order looks up the customer's tier at that moment.
+
+| Order | Customer table at join time | Output |
+|---|---|---|
+| alice order-1 | alice = gold | tier = gold |
+| carol order-2 | (no row) | dropped (inner join) |
+| bob order-3 | bob = gold (updated from silver before) | tier = gold |
 
 ## Diagram
 

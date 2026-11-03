@@ -6,20 +6,16 @@
 
 ## Example
 
-```
-Initial data:
-  topic                : 22-emails, 3 partitions, 300 records
-  group                : 22-email-sender processes 100, then stops
+**Lag = log end offset − committed offset**, per partition. 300 records produced, group `22-email-sender` processed 100:
 
-Commands:
-  producer stats       : txmsgs=300, queued=0, broker rtt avg 12.4–14.4 ms
-  ListConsumerGroupOffsets : p0 0 · p1 100 · p2 0
-  QueryWatermarkOffsets    : p0 103 · p1 105 · p2 92
+| Partition | End offset | Committed | Lag |
+|---|---|---|---|
+| p0 | 103 | 0 | 103 |
+| p1 | 105 | 100 | 5 |
+| p2 | 92 | 0 | 92 |
+| **total** | 300 | 100 | **200** |
 
-Result:
-  lag                  : (103 − 0) + (105 − 100) + (92 − 0) = 200
-  check                : 300 produced − 100 processed = 200
-```
+Check: 300 produced − 100 processed = 200. Producer stats at the same time: `txmsgs=300`, `queued=0`, broker RTT 12.4–14.4 ms.
 
 ## Diagram
 

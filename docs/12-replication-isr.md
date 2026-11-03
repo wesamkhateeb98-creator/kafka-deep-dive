@@ -6,21 +6,16 @@
 
 ## Example
 
-```
-Initial data:
-  topic                : 12-bank-transfers, 3 partitions, RF 3, min.insync.replicas 2
-  producer             : acks=all, no client retries
+Topic `12-bank-transfers`, RF 3, `min.insync.replicas=2`, producer `acks=all`:
 
-Commands:
-  all 3 brokers up     : ISR = 3 per partition → write OK (offset 0)
-  docker stop kafka-3  : ISR = 2 → write OK (offset 1)
-  docker stop kafka-2  : ISR = [1] → write FAILED NotEnoughReplicas
-  docker start 2 and 3 : ISR = [1,2,3] again → write OK (offset 2)
+| Step | Brokers up | ISR | Write | Why |
+|---|---|---|---|---|
+| 1 | 1 2 3 | [1,2,3] | ✅ offset 0 | 3 ≥ 2 |
+| 2 | 1 2 (stop kafka-3) | [1,2] | ✅ offset 1 | 2 ≥ 2 |
+| 3 | 1 (stop kafka-2) | [1] | ❌ NotEnoughReplicas | 1 < 2 |
+| 4 | 1 2 3 (start both) | [1,2,3] | ✅ offset 2 | followers caught up |
 
-Result:
-  data lost            : 0 records
-  writes refused       : only while ISR (1) < min.insync.replicas (2)
-```
+Writes stopped while only one copy existed; **0 records lost**.
 
 ## Diagram
 

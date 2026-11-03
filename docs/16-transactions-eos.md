@@ -6,21 +6,19 @@
 
 ## Example
 
-```
-Initial data:
-  topic                : 16-transfers, 1 partition
-  tx 1 (commit)        : alice, bob
-  tx 2 (abort)         : carol, dave
+Each transaction ends with a **control marker** in the log; `read_committed` consumers hide aborted records and markers.
 
-Commands:
-  read_uncommitted     : alice@0, bob@1, carol@3, dave@4
-  read_committed       : alice@0, bob@1
-  consume-transform-produce : 2 transactions, each = ledger write + offset commit
-
-Result:
-  offset 2, 5          : commit / abort control markers (never returned)
-  ledger               : alice@0, bob@2 (offset 1 = marker), exactly 2 entries
 ```
+16-transfers p0
+offset:          0       1       2          3       4       5
+                 alice   bob     COMMIT     carol   dave    ABORT
+                 └─ tx 1 ─┘      marker     └─ tx 2 ─┘      marker
+
+read_uncommitted :  alice   bob             carol   dave
+read_committed   :  alice   bob
+```
+
+Consume-transform-produce: each transaction = ledger write + offset commit, so the ledger got exactly 2 entries (alice@0, bob@2; offset 1 is a marker).
 
 ## Diagram
 

@@ -6,21 +6,15 @@
 
 ## Example
 
-```
-Initial data:
-  ingest               : 50 MB/s, retention 30 days, RF 3
-  local tier           : 1 day (local.retention.ms = 86400000)
+50 MB/s ingest, 30-day retention, RF 3. Daily volume: 50 MB/s × 86,400 s = **4.32 TB/day**.
 
-Commands:
-  create 28-audit-log with remote.storage.enable=true on this lab
-                       : InvalidConfig "Tiered Storage functionality is disabled in the broker"
-  capacity math        : 50 MB/s × 86,400 s = 4.32 TB per day
+| Storage | Days kept | Copies | Size |
+|---|---|---|---|
+| Broker disk, no tiering | 30 | 3 | 4.32 × 30 × 3 = **388.8 TB** |
+| Broker disk, tiering (`local.retention.ms` = 1 day) | 1 | 3 | 4.32 × 1 × 3 = **12.96 TB** (96.7 % less) |
+| Object storage (remote tier) | 30 | 1 | 4.32 × 30 × 1 = 129.6 TB |
 
-Result:
-  broker disk without tiering : 4.32 × 30 × 3 = 388.8 TB
-  broker disk with tiering    : 4.32 × 1 × 3  = 12.96 TB (96.7 % less)
-  object storage              : 4.32 × 30 × 1 = 129.6 TB
-```
+On this lab, `remote.storage.enable=true` fails with `InvalidConfig "Tiered Storage functionality is disabled in the broker"`.
 
 ## Diagram
 

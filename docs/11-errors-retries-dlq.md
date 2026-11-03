@@ -6,24 +6,17 @@
 
 ## Example
 
-```
-Initial data:
-  topic                : 11-orders, 5 records
-  records              : ok · "not-json" · amount -5 · flaky ×2 · flaky ×9
-  max attempts         : 3, backoff 100 ms → 200 ms
+Max 3 attempts, backoff 100 ms → 200 ms. **Permanent** errors skip retries; **transient** ones are retried.
 
-Commands:
-  offset 0             : OK on attempt 1
-  offset 1             : JsonReaderException → DLQ (attempt 1)
-  offset 2             : ArgumentException → DLQ (attempt 1)
-  offset 3             : timeout, timeout, OK on attempt 3
-  offset 4             : timeout ×3 → DLQ (attempt 3)
+| Offset | Payload | Attempt 1 | Attempt 2 | Attempt 3 | Outcome |
+|---|---|---|---|---|---|
+| 0 | valid order | ✅ | | | processed |
+| 1 | `not-json` | JsonReaderException (permanent) | | | → DLQ |
+| 2 | amount −5 | ArgumentException (permanent) | | | → DLQ |
+| 3 | flaky ×2 | timeout | timeout | ✅ | processed |
+| 4 | flaky ×9 | timeout | timeout | timeout | → DLQ |
 
-Result:
-  processed            : 2 of 5
-  in 11-orders.dlq     : 3, each with error / source / attempts headers
-  consumer             : never stuck; all 5 offsets committed
-```
+Result: 2 processed, 3 in `11-orders.dlq` (with `error`/`source`/`attempts` headers), all 5 offsets committed; the consumer never blocks.
 
 ## Diagram
 
